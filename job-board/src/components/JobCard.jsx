@@ -1,8 +1,12 @@
 import React from "react";
 
-const JobCard = ({ job }) => {
+const JobCard = ({ job, index, onDragStart }) => {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4">
+    <div
+      className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4"
+      draggable
+      onDragStart={(e) => onDragStart(e, index)}
+    >
       <div className="flex-shrink-0">
         <img
           src="/path/to/company/icon.png"
