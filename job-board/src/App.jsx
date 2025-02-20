@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import StartPage from "./components/StartPage";
+import StartPage from "./pages/StartPage";
 import JobBoardPage from "./pages/JobBoardPage";
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <Router>
       <Routes>
