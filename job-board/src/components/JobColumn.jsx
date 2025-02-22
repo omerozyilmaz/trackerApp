@@ -1,19 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import JobCard from "./JobCard";
 import { useDispatch, useSelector } from "react-redux";
 import { addJob, moveJob } from "../store/jobSlice";
+import { updateFormData, resetFormData } from "../store/formSlice";
 
 const JobColumn = ({ title, columnKey }) => {
   const dispatch = useDispatch();
   const jobs = useSelector((state) => state.jobs[columnKey]);
+  const formData = useSelector((state) => state.form.formData);
+
+  // Local state for form visibility
+  const [isFormVisible, setFormVisible] = useState(false);
 
   const handleAddJob = () => {
+    setFormVisible(!isFormVisible);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    dispatch(updateFormData({ [name]: value }));
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
     const newJob = {
-      title: "New Job",
-      company: "New Company",
+      ...formData,
       addedTime: "Just now",
     };
     dispatch(addJob({ column: columnKey, job: newJob }));
+    setFormVisible(false);
+    dispatch(resetFormData());
   };
 
   const handleDragStart = (e, index) => {
@@ -50,6 +66,56 @@ const JobColumn = ({ title, columnKey }) => {
           +
         </button>
       </div>
+      {isFormVisible && (
+        <form onSubmit={handleFormSubmit} className="mb-4">
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            placeholder="Job Title"
+            className="border p-1 mr-2"
+          />
+          <input
+            type="text"
+            name="company"
+            value={formData.company}
+            onChange={handleInputChange}
+            placeholder="Company"
+            className="border p-1 mr-2"
+          />
+          <input
+            type="text"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            placeholder="Description"
+            className="border p-1 mr-2"
+          />
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleInputChange}
+            placeholder="Location"
+            className="border p-1 mr-2"
+          />
+          <input
+            type="text"
+            name="jobUrl"
+            value={formData.jobUrl}
+            onChange={handleInputChange}
+            placeholder="Job URL"
+            className="border p-1 mr-2"
+          />
+          <button
+            type="submit"
+            className="bg-green-500 text-white px-2 py-1 rounded"
+          >
+            Add Job
+          </button>
+        </form>
+      )}
       <div className="space-y-2">
         {jobs.map((job, index) => (
           <JobCard
