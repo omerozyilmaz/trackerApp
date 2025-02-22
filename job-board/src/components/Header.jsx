@@ -3,7 +3,7 @@ import React from "react";
 const Header = () => {
   return (
     <header className="bg-white shadow-md p-4 flex justify-between items-center">
-      <h1 className="text-xl font-bold">Job Search 2023</h1>
+      <h1 className="text-xl font-bold">Job Search 2025</h1>
       <div className="flex space-x-4">
         <input
           type="text"

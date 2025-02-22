@@ -17,6 +17,9 @@ const JobCard = ({ job, index, onDragStart }) => {
       <div>
         <h3 className="text-lg font-semibold">{job.title}</h3>
         <p className="text-gray-500">{job.company}</p>
+        <p className="text-gray-500">{job.description}</p>
+        <p className="text-gray-500">{job.location}</p>
+        <p className="text-gray-500">{job.jobUrl}</p>
         <p className="text-gray-400 text-sm">{job.addedTime}</p>
       </div>
     </div>
