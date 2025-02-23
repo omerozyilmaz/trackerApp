@@ -3,8 +3,10 @@ import JobCard from "./JobCard";
 import { useSelector } from "react-redux";
 import useFormHandler from "../hooks/useFormHandler";
 import useDragAndDrop from "../hooks/useDragAndDrop";
+import { useTheme } from "../context/ThemeContext";
 
 const JobColumn = ({ title, columnKey }) => {
+  const { isDarkMode } = useTheme();
   const jobs = useSelector((state) => state.jobs[columnKey]);
   const {
     isFormVisible,
@@ -19,30 +21,49 @@ const JobColumn = ({ title, columnKey }) => {
 
   return (
     <div
-      className="bg-gray-100 p-4 rounded-lg shadow-md"
+      className={`${
+        isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"
+      } rounded-xl p-4 shadow-sm border transition-all hover:shadow-md`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">
-          {title} ({jobs.length})
-        </h2>
+        <div className="flex items-center space-x-2">
+          <h2
+            className={`font-semibold ${
+              isDarkMode ? "text-gray-100" : "text-gray-700"
+            }`}
+          >
+            {title}
+            <span
+              className={`ml-2 text-sm ${
+                isDarkMode ? "text-gray-400" : "text-gray-400"
+              }`}
+            >
+              ({jobs.length} JOBS)
+            </span>
+          </h2>
+        </div>
         <button
           onClick={toggleFormVisibility}
-          className="bg-blue-500 text-white px-2 py-1 rounded"
+          className={`w-8 h-8 flex items-center justify-center rounded-md ${
+            isDarkMode
+              ? "hover:bg-gray-700 text-gray-400 hover:text-purple-400"
+              : "hover:bg-gray-50 text-gray-400 hover:text-purple-600"
+          } transition-colors`}
         >
           +
         </button>
       </div>
       {isFormVisible && (
-        <form onSubmit={handleFormSubmit} className="mb-4">
+        <form onSubmit={handleFormSubmit} className="mb-4 space-y-3">
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleInputChange}
             placeholder="Job Title"
-            className="border p-1 mr-2"
+            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <input
             type="text"
@@ -50,7 +71,7 @@ const JobColumn = ({ title, columnKey }) => {
             value={formData.company}
             onChange={handleInputChange}
             placeholder="Company"
-            className="border p-1 mr-2"
+            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <input
             type="text"
@@ -58,7 +79,7 @@ const JobColumn = ({ title, columnKey }) => {
             value={formData.description}
             onChange={handleInputChange}
             placeholder="Description"
-            className="border p-1 mr-2"
+            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <input
             type="text"
@@ -66,7 +87,7 @@ const JobColumn = ({ title, columnKey }) => {
             value={formData.location}
             onChange={handleInputChange}
             placeholder="Location"
-            className="border p-1 mr-2"
+            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <input
             type="text"
@@ -74,17 +95,17 @@ const JobColumn = ({ title, columnKey }) => {
             value={formData.jobUrl}
             onChange={handleInputChange}
             placeholder="Job URL"
-            className="border p-1 mr-2"
+            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <button
             type="submit"
-            className="bg-green-500 text-white px-2 py-1 rounded"
+            className="w-full bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
           >
             Add Job
           </button>
         </form>
       )}
-      <div className="space-y-2">
+      <div className="space-y-3">
         {jobs.map((job, index) => (
           <JobCard
             key={index}
