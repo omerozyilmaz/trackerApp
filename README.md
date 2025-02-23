@@ -18,7 +18,7 @@ A modern job application tracking system built with React, Redux, and Tailwind C
 - **Frontend Framework**: React.js
 - **State Management**: Redux Toolkit
 - **Styling**: Tailwind CSS
-- **Drag and Drop**: React DnD
+- **Drag and Drop**: Custom Hooks
 - **Storage**: Local Storage API
 - **Build Tool**: Vite
 
