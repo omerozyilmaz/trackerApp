@@ -7,9 +7,14 @@ const useFormHandler = (columnKey) => {
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.form.formData);
   const [isFormVisible, setFormVisible] = useState(false);
+  const [isDetailsVisible, setIsDetailsVisible] = useState(false);
 
   const toggleFormVisibility = () => {
     setFormVisible(!isFormVisible);
+  };
+
+  const toggleDetails = () => {
+    setIsDetailsVisible((prev) => !prev);
   };
 
   const handleInputChange = (e) => {
@@ -30,7 +35,9 @@ const useFormHandler = (columnKey) => {
 
   return {
     isFormVisible,
+    isDetailsVisible,
     toggleFormVisibility,
+    toggleDetails,
     handleInputChange,
     handleFormSubmit,
     formData,

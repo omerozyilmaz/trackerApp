@@ -10,7 +10,9 @@ const JobColumn = ({ title, columnKey }) => {
   const jobs = useSelector((state) => state.jobs[columnKey]);
   const {
     isFormVisible,
+    isDetailsVisible,
     toggleFormVisibility,
+    toggleDetails,
     handleInputChange,
     handleFormSubmit,
     formData,
@@ -23,27 +25,25 @@ const JobColumn = ({ title, columnKey }) => {
     <div
       className={`${
         isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"
-      } rounded-xl p-4 shadow-sm border transition-all hover:shadow-md`}
+      } rounded-xl p-4 shadow-sm border h-full flex flex-col overflow-hidden`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
       <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-2">
-          <h2
-            className={`font-semibold ${
-              isDarkMode ? "text-gray-100" : "text-gray-700"
+        <h2
+          className={`font-semibold ${
+            isDarkMode ? "text-gray-100" : "text-gray-700"
+          }`}
+        >
+          {title}
+          <span
+            className={`ml-2 text-sm ${
+              isDarkMode ? "text-gray-400" : "text-gray-400"
             }`}
           >
-            {title}
-            <span
-              className={`ml-2 text-sm ${
-                isDarkMode ? "text-gray-400" : "text-gray-400"
-              }`}
-            >
-              ({jobs.length} JOBS)
-            </span>
-          </h2>
-        </div>
+            ({jobs.length} JOBS)
+          </span>
+        </h2>
         <button
           onClick={toggleFormVisibility}
           className={`w-8 h-8 flex items-center justify-center rounded-md ${
@@ -55,63 +55,66 @@ const JobColumn = ({ title, columnKey }) => {
           +
         </button>
       </div>
-      {isFormVisible && (
-        <form onSubmit={handleFormSubmit} className="mb-4 space-y-3">
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            placeholder="Job Title"
-            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <input
-            type="text"
-            name="company"
-            value={formData.company}
-            onChange={handleInputChange}
-            placeholder="Company"
-            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <input
-            type="text"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            placeholder="Description"
-            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleInputChange}
-            placeholder="Location"
-            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <input
-            type="text"
-            name="jobUrl"
-            value={formData.jobUrl}
-            onChange={handleInputChange}
-            placeholder="Job URL"
-            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <button
-            type="submit"
-            className="w-full bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
-          >
-            Add Job
-          </button>
-        </form>
-      )}
-      <div className="space-y-3">
+
+      <div className="flex-1 overflow-y-auto space-y-4">
+        {isFormVisible && (
+          <form onSubmit={handleFormSubmit} className="space-y-3">
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              placeholder="Job Title"
+              className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <input
+              type="text"
+              name="company"
+              value={formData.company}
+              onChange={handleInputChange}
+              placeholder="Company"
+              className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <input
+              type="text"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="Description"
+              className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleInputChange}
+              placeholder="Location"
+              className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <input
+              type="text"
+              name="jobUrl"
+              value={formData.jobUrl}
+              onChange={handleInputChange}
+              placeholder="Job URL"
+              className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <button
+              type="submit"
+              className="w-full min-h-[44px] bg-purple-600 text-white px-4 py-2 sm:py-2.5 rounded-md hover:bg-purple-700 transition-colors text-sm sm:text-base"
+            >
+              Add Job
+            </button>
+          </form>
+        )}
         {jobs.map((job, index) => (
           <JobCard
             key={index}
             job={job}
             index={index}
             onDragStart={handleDragStart}
+            isDetailsVisible={isDetailsVisible}
+            toggleDetails={toggleDetails}
           />
         ))}
       </div>
