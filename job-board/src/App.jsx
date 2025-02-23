@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import StartPage from "./pages/StartPage";
+import HomePage from "./pages/HomePage";
 import JobBoardPage from "./pages/JobBoardPage";
 import { ThemeProvider } from "./context/ThemeContext";
 
@@ -9,7 +9,7 @@ const App = () => {
     <ThemeProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<StartPage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/job-board" element={<JobBoardPage />} />
         </Routes>
       </Router>
