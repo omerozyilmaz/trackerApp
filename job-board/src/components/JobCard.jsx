@@ -11,6 +11,11 @@ const JobCard = ({
   const { isDarkMode, handleDelete, handleDragStart, handleLinkClick } =
     useJobCard(job, index, onDragStart);
 
+  // Ensure the job URL is absolute
+  const jobUrl = job.jobUrl.startsWith("http")
+    ? job.jobUrl
+    : `http://${job.jobUrl}`;
+
   return (
     <div
       className={`${
@@ -59,7 +64,7 @@ const JobCard = ({
               {job.company}
             </p>
             <a
-              href={job.jobUrl}
+              href={jobUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`text-sm sm:text-base inline-block min-h-[44px] sm:min-h-[unset] ${

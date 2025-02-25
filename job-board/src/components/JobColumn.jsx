@@ -16,7 +16,14 @@ const JobColumn = ({ title, columnKey }) => {
     handleDragStart,
     handleDrop,
     handleDragOver,
+    searchQuery,
+    setSearchQuery,
   } = useJobColumn(columnKey);
+
+  // Filter jobs based on search query
+  const filteredJobs = jobs.filter((job) =>
+    job.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div
@@ -38,7 +45,7 @@ const JobColumn = ({ title, columnKey }) => {
               isDarkMode ? "text-gray-400" : "text-gray-400"
             }`}
           >
-            ({jobs.length} JOBS)
+            ({filteredJobs.length} JOBS)
           </span>
         </h2>
         <button
@@ -53,6 +60,19 @@ const JobColumn = ({ title, columnKey }) => {
         </button>
       </div>
 
+      {/* Search Input */}
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="Search jobs..."
+        className={`w-full mb-4 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+          isDarkMode
+            ? "bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500"
+            : "border-gray-300 focus:ring-purple-500"
+        }`}
+      />
+
       <div className="flex-1 overflow-y-auto space-y-4">
         {isFormVisible && (
           <form onSubmit={handleFormSubmit} className="space-y-3">
@@ -62,7 +82,11 @@ const JobColumn = ({ title, columnKey }) => {
               value={formData.title}
               onChange={handleInputChange}
               placeholder="Job Title"
-              className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className={`w-full min-h-[44px] px-3 py-2 sm:py-2.5 border rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 ${
+                isDarkMode
+                  ? "bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500"
+                  : "border-gray-200 focus:ring-purple-500"
+              }`}
               required
             />
             <input
@@ -71,7 +95,11 @@ const JobColumn = ({ title, columnKey }) => {
               value={formData.company}
               onChange={handleInputChange}
               placeholder="Company"
-              className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className={`w-full min-h-[44px] px-3 py-2 sm:py-2.5 border rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 ${
+                isDarkMode
+                  ? "bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500"
+                  : "border-gray-200 focus:ring-purple-500"
+              }`}
               required
             />
             <input
@@ -80,7 +108,11 @@ const JobColumn = ({ title, columnKey }) => {
               value={formData.description}
               onChange={handleInputChange}
               placeholder="Description"
-              className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className={`w-full min-h-[44px] px-3 py-2 sm:py-2.5 border rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 ${
+                isDarkMode
+                  ? "bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500"
+                  : "border-gray-200 focus:ring-purple-500"
+              }`}
             />
             <input
               type="text"
@@ -88,7 +120,11 @@ const JobColumn = ({ title, columnKey }) => {
               value={formData.location}
               onChange={handleInputChange}
               placeholder="Location"
-              className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className={`w-full min-h-[44px] px-3 py-2 sm:py-2.5 border rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 ${
+                isDarkMode
+                  ? "bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500"
+                  : "border-gray-200 focus:ring-purple-500"
+              }`}
             />
             <input
               type="text"
@@ -96,17 +132,25 @@ const JobColumn = ({ title, columnKey }) => {
               value={formData.jobUrl}
               onChange={handleInputChange}
               placeholder="Job URL"
-              className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className={`w-full min-h-[44px] px-3 py-2 sm:py-2.5 border rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 ${
+                isDarkMode
+                  ? "bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500"
+                  : "border-gray-200 focus:ring-purple-500"
+              }`}
             />
             <button
               type="submit"
-              className="w-full min-h-[44px] bg-purple-600 text-white px-4 py-2 sm:py-2.5 rounded-md hover:bg-purple-700 transition-colors text-sm sm:text-base"
+              className={`w-full min-h-[44px] px-4 py-2 sm:py-2.5 rounded-md transition-colors text-sm sm:text-base ${
+                isDarkMode
+                  ? "bg-purple-600 text-white hover:bg-purple-700"
+                  : "bg-purple-600 text-white hover:bg-purple-700"
+              }`}
             >
               Add Job
             </button>
           </form>
         )}
-        {jobs.map((job, index) => (
+        {filteredJobs.map((job, index) => (
           <JobCard
             key={job.id || index}
             job={job}

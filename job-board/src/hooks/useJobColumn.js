@@ -16,6 +16,7 @@ const useJobColumn = (columnKey) => {
     jobUrl: "",
   });
   const [expandedJobId, setExpandedJobId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { createJob } = useJobsApi();
   const { handleDragStart, handleDrop, handleDragOver } =
@@ -72,6 +73,8 @@ const useJobColumn = (columnKey) => {
     handleDragStart,
     handleDrop,
     handleDragOver,
+    searchQuery,
+    setSearchQuery,
   };
 };
 
