@@ -1,12 +1,16 @@
 import React from "react";
-import { useTheme } from "../context/ThemeContext";
-import { useAuth } from "../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import useHeader from "../hooks/useHeader";
 
 const Header = () => {
-  const { isDarkMode, toggleDarkMode } = useTheme();
-  const { isAuthenticated, user, logout } = useAuth();
-  const navigate = useNavigate();
+  const {
+    isDarkMode,
+    toggleDarkMode,
+    isAuthenticated,
+    user,
+    logout,
+    handleNavigate,
+  } = useHeader();
 
   return (
     <header
@@ -92,7 +96,7 @@ const Header = () => {
             <>
               {/* Login/Register Buttons */}
               <button
-                onClick={() => navigate("/login")}
+                onClick={() => handleNavigate("/login")}
                 className={`px-3 py-1 rounded-md ${
                   isDarkMode
                     ? "text-gray-300 hover:bg-gray-700"
@@ -102,7 +106,7 @@ const Header = () => {
                 Login
               </button>
               <button
-                onClick={() => navigate("/register")}
+                onClick={() => handleNavigate("/register")}
                 className="hidden sm:block bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
               >
                 Register

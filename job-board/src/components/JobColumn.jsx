@@ -1,64 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import JobCard from "./JobCard";
-import { useSelector } from "react-redux";
-import useJobsApi from "../hooks/useJobsApi";
-import useDragAndDrop from "../hooks/useDragAndDrop";
-import { useTheme } from "../context/ThemeContext";
+import useJobColumn from "../hooks/useJobColumn";
 
 const JobColumn = ({ title, columnKey }) => {
-  const { isDarkMode } = useTheme();
-  const jobs = useSelector((state) => state.jobs[columnKey]);
-  const [isFormVisible, setFormVisible] = useState(false);
-  const [formData, setFormData] = useState({
-    title: "",
-    company: "",
-    description: "",
-    location: "",
-    jobUrl: "",
-  });
-  const [expandedJobId, setExpandedJobId] = useState(null);
-
-  const { createJob } = useJobsApi();
-  const { handleDragStart, handleDrop, handleDragOver } =
-    useDragAndDrop(columnKey);
-
-  const toggleFormVisibility = () => {
-    setFormVisible(!isFormVisible);
-  };
-
-  const toggleDetails = (jobId) => {
-    setExpandedJobId(expandedJobId === jobId ? null : jobId);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-
-    const jobData = {
-      ...formData,
-      column: columnKey,
-    };
-
-    const result = await createJob(jobData);
-
-    if (result.success) {
-      setFormVisible(false);
-      setFormData({
-        title: "",
-        company: "",
-        description: "",
-        location: "",
-        jobUrl: "",
-      });
-    }
-  };
+  const {
+    isDarkMode,
+    jobs,
+    isFormVisible,
+    formData,
+    expandedJobId,
+    toggleFormVisibility,
+    toggleDetails,
+    handleInputChange,
+    handleFormSubmit,
+    handleDragStart,
+    handleDrop,
+    handleDragOver,
+  } = useJobColumn(columnKey);
 
   return (
     <div

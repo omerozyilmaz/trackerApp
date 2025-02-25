@@ -1,6 +1,5 @@
 import React from "react";
-import { useTheme } from "../context/ThemeContext";
-import useJobsApi from "../hooks/useJobsApi";
+import useJobCard from "../hooks/useJobCard";
 
 const JobCard = ({
   job,
@@ -9,15 +8,8 @@ const JobCard = ({
   isDetailsVisible,
   toggleDetails,
 }) => {
-  const { isDarkMode } = useTheme();
-  const { deleteJob } = useJobsApi();
-
-  const handleDelete = async (e) => {
-    e.stopPropagation();
-    if (window.confirm("Are you sure you want to delete this job?")) {
-      await deleteJob(job.id, job.column || "wishlist");
-    }
-  };
+  const { isDarkMode, handleDelete, handleDragStart, handleLinkClick } =
+    useJobCard(job, index, onDragStart);
 
   return (
     <div
@@ -25,7 +17,7 @@ const JobCard = ({
         isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"
       } p-4 rounded-lg border shadow-sm hover:shadow-md transition-all cursor-move group`}
       draggable
-      onDragStart={(e) => onDragStart(e, index)}
+      onDragStart={handleDragStart}
     >
       <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
         {/* Company Logo */}
@@ -75,7 +67,7 @@ const JobCard = ({
                   ? "text-purple-400 hover:text-purple-300"
                   : "text-purple-600 hover:text-purple-700"
               } hover:underline`}
-              onClick={(e) => e.stopPropagation()}
+              onClick={handleLinkClick}
             >
               View Job
             </a>
