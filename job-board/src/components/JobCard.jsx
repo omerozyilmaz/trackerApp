@@ -1,5 +1,6 @@
 import React from "react";
 import { useTheme } from "../context/ThemeContext";
+import useJobsApi from "../hooks/useJobsApi";
 
 const JobCard = ({
   job,
@@ -9,6 +10,14 @@ const JobCard = ({
   toggleDetails,
 }) => {
   const { isDarkMode } = useTheme();
+  const { deleteJob } = useJobsApi();
+
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    if (window.confirm("Are you sure you want to delete this job?")) {
+      await deleteJob(job.id, job.column || "wishlist");
+    }
+  };
 
   return (
     <div
@@ -21,26 +30,35 @@ const JobCard = ({
       <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
         {/* Company Logo */}
         <div className="flex-shrink-0">
-          <img
-            src="/path/to/company/icon.png"
-            alt="Company Icon"
-            className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full object-cover ${
+          <div
+            className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center ${
               isDarkMode ? "bg-gray-700" : "bg-gray-100"
             }`}
-          />
+          >
+            {job.company ? job.company.charAt(0).toUpperCase() : "J"}
+          </div>
         </div>
 
         {/* Content Container */}
         <div className="flex-1 min-w-0 space-y-2 sm:space-y-3">
           {/* Main Content */}
           <div className="space-y-1 sm:space-y-2">
-            <h3
-              className={`text-base sm:text-lg lg:text-xl font-medium truncate ${
-                isDarkMode ? "text-gray-100" : "text-gray-900"
-              }`}
-            >
-              {job.title}
-            </h3>
+            <div className="flex justify-between">
+              <h3
+                className={`text-base sm:text-lg lg:text-xl font-medium truncate ${
+                  isDarkMode ? "text-gray-100" : "text-gray-900"
+                }`}
+              >
+                {job.title}
+              </h3>
+              <button
+                onClick={handleDelete}
+                className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-opacity"
+                aria-label="Delete job"
+              >
+                ✕
+              </button>
+            </div>
             <p
               className={`text-sm sm:text-base ${
                 isDarkMode ? "text-gray-400" : "text-gray-500"
@@ -50,11 +68,14 @@ const JobCard = ({
             </p>
             <a
               href={job.jobUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className={`text-sm sm:text-base inline-block min-h-[44px] sm:min-h-[unset] ${
                 isDarkMode
                   ? "text-purple-400 hover:text-purple-300"
                   : "text-purple-600 hover:text-purple-700"
               } hover:underline`}
+              onClick={(e) => e.stopPropagation()}
             >
               View Job
             </a>

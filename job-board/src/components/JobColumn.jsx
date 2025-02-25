@@ -1,25 +1,64 @@
-import React from "react";
+import React, { useState } from "react";
 import JobCard from "./JobCard";
 import { useSelector } from "react-redux";
-import useFormHandler from "../hooks/useFormHandler";
+import useJobsApi from "../hooks/useJobsApi";
 import useDragAndDrop from "../hooks/useDragAndDrop";
 import { useTheme } from "../context/ThemeContext";
 
 const JobColumn = ({ title, columnKey }) => {
   const { isDarkMode } = useTheme();
   const jobs = useSelector((state) => state.jobs[columnKey]);
-  const {
-    isFormVisible,
-    isDetailsVisible,
-    toggleFormVisibility,
-    toggleDetails,
-    handleInputChange,
-    handleFormSubmit,
-    formData,
-  } = useFormHandler(columnKey);
+  const [isFormVisible, setFormVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    company: "",
+    description: "",
+    location: "",
+    jobUrl: "",
+  });
+  const [expandedJobId, setExpandedJobId] = useState(null);
 
+  const { createJob } = useJobsApi();
   const { handleDragStart, handleDrop, handleDragOver } =
     useDragAndDrop(columnKey);
+
+  const toggleFormVisibility = () => {
+    setFormVisible(!isFormVisible);
+  };
+
+  const toggleDetails = (jobId) => {
+    setExpandedJobId(expandedJobId === jobId ? null : jobId);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+
+    const jobData = {
+      ...formData,
+      column: columnKey,
+    };
+
+    const result = await createJob(jobData);
+
+    if (result.success) {
+      setFormVisible(false);
+      setFormData({
+        title: "",
+        company: "",
+        description: "",
+        location: "",
+        jobUrl: "",
+      });
+    }
+  };
 
   return (
     <div
@@ -66,6 +105,7 @@ const JobColumn = ({ title, columnKey }) => {
               onChange={handleInputChange}
               placeholder="Job Title"
               className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required
             />
             <input
               type="text"
@@ -74,6 +114,7 @@ const JobColumn = ({ title, columnKey }) => {
               onChange={handleInputChange}
               placeholder="Company"
               className="w-full min-h-[44px] px-3 py-2 sm:py-2.5 border border-gray-200 rounded-md text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required
             />
             <input
               type="text"
@@ -109,12 +150,12 @@ const JobColumn = ({ title, columnKey }) => {
         )}
         {jobs.map((job, index) => (
           <JobCard
-            key={index}
+            key={job.id || index}
             job={job}
             index={index}
-            onDragStart={handleDragStart}
-            isDetailsVisible={isDetailsVisible}
-            toggleDetails={toggleDetails}
+            onDragStart={(e) => handleDragStart(e, index, job.id)}
+            isDetailsVisible={expandedJobId === job.id}
+            toggleDetails={() => toggleDetails(job.id)}
           />
         ))}
       </div>

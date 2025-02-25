@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
+import Header from "../components/Header";
 
 const FeatureCard = ({ icon, title, description }) => {
   const { isDarkMode } = useTheme();
@@ -28,6 +30,7 @@ const FeatureCard = ({ icon, title, description }) => {
 const HomePage = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   return (
     <div
@@ -35,6 +38,8 @@ const HomePage = () => {
         isDarkMode ? "bg-gray-900" : "bg-[#f9f5ff]"
       } transition-colors duration-300`}
     >
+      <Header />
+
       {/* Hero Section */}
       <section className="pt-20 pb-16 sm:pt-24 sm:pb-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
@@ -55,20 +60,25 @@ const HomePage = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button
-              onClick={() => navigate("/job-board")}
+              onClick={() =>
+                isAuthenticated ? navigate("/job-board") : navigate("/login")
+              }
               className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
             >
-              Get Started
+              {isAuthenticated ? "Go to Job Board" : "Get Started"}
             </button>
-            <button
-              className={`px-6 py-3 rounded-lg border ${
-                isDarkMode
-                  ? "border-gray-700 text-gray-300 hover:bg-gray-800"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
-              } transition-colors`}
-            >
-              Learn More
-            </button>
+            {!isAuthenticated && (
+              <button
+                onClick={() => navigate("/register")}
+                className={`px-6 py-3 rounded-lg border ${
+                  isDarkMode
+                    ? "border-gray-700 text-gray-300 hover:bg-gray-800"
+                    : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                } transition-colors`}
+              >
+                Create Account
+              </button>
+            )}
           </div>
         </div>
       </section>
