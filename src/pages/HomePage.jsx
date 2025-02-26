@@ -127,7 +127,7 @@ const HomePage = () => {
           </h2>
           <div className="aspect-video rounded-xl overflow-hidden shadow-lg">
             <img
-              src="./src/assets/See It In Action.png"
+              src="/SeeITInAction.png"
               alt="Job Board Demo"
               className="w-full h-full object-cover"
             />
