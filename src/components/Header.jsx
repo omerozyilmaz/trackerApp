@@ -21,45 +21,61 @@ const Header = () => {
       } shadow-sm transition-colors duration-300`}
     >
       <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-        {/* Logo */}
-        <Link to="/">
-          <h1
-            className={`text-xl font-semibold ${
-              isDarkMode ? "text-gray-100" : "text-indigo-950"
-            }`}
-          >
-            Job Search
-          </h1>
-        </Link>
+        {/* Logo and Main Navigation */}
+        <div className="flex items-center gap-8">
+          {/* Logo */}
+          <Link to="/">
+            <h1
+              className={`text-xl font-semibold ${
+                isDarkMode ? "text-gray-100" : "text-indigo-950"
+              }`}
+            >
+              Job Search
+            </h1>
+          </Link>
 
-        {/* Navigation */}
-        {isAuthenticated && (
-          <nav className="hidden md:flex items-center gap-8">
+          {/* Main Navigation */}
+          <nav className="hidden md:flex items-center gap-6">
+            {/* Contact link always visible */}
             <button
-              onClick={handleBoardClick}
+              onClick={handleContactClick}
               className={`px-3 py-2 rounded-md transition-colors ${
                 isDarkMode
                   ? "text-gray-300 hover:text-purple-400"
                   : "text-gray-600 hover:text-purple-600"
               }`}
             >
-              Board
+              Contact
             </button>
-            {["Activities", "Contacts", "Documents"].map((item) => (
-              <button
-                key={item}
-                onClick={item === "Contacts" ? handleContactClick : undefined}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  isDarkMode
-                    ? "text-gray-300 hover:text-purple-400"
-                    : "text-gray-600 hover:text-purple-600"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
+
+            {isAuthenticated && (
+              <>
+                <button
+                  onClick={handleBoardClick}
+                  className={`px-3 py-2 rounded-md transition-colors ${
+                    isDarkMode
+                      ? "text-gray-300 hover:text-purple-400"
+                      : "text-gray-600 hover:text-purple-600"
+                  }`}
+                >
+                  Board
+                </button>
+                {["Activities", "Documents"].map((item) => (
+                  <button
+                    key={item}
+                    className={`px-3 py-2 rounded-md transition-colors ${
+                      isDarkMode
+                        ? "text-gray-300 hover:text-purple-400"
+                        : "text-gray-600 hover:text-purple-600"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </>
+            )}
           </nav>
-        )}
+        </div>
 
         {/* Actions */}
         <div className="flex items-center gap-4">
