@@ -15,6 +15,10 @@ const useHeader = () => {
     navigate("/job-board");
   };
 
+  const handleContactClick = () => {
+    navigate("/contact");
+  };
+
   return {
     isDarkMode,
     toggleDarkMode,
@@ -24,6 +28,7 @@ const useHeader = () => {
     navigate,
     handleNavigate,
     handleBoardClick,
+    handleContactClick,
   };
 };
 

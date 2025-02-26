@@ -11,6 +11,7 @@ const Header = () => {
     logout,
     handleNavigate,
     handleBoardClick,
+    handleContactClick,
   } = useHeader();
 
   return (
@@ -47,6 +48,7 @@ const Header = () => {
             {["Activities", "Contacts", "Documents"].map((item) => (
               <button
                 key={item}
+                onClick={item === "Contacts" ? handleContactClick : undefined}
                 className={`px-3 py-2 rounded-md transition-colors ${
                   isDarkMode
                     ? "text-gray-300 hover:text-purple-400"
