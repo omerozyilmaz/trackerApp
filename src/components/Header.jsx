@@ -10,6 +10,7 @@ const Header = () => {
     user,
     logout,
     handleNavigate,
+    handleBoardClick,
   } = useHeader();
 
   return (
@@ -33,7 +34,17 @@ const Header = () => {
         {/* Navigation */}
         {isAuthenticated && (
           <nav className="hidden md:flex items-center gap-8">
-            {["Board", "Activities", "Contacts", "Documents"].map((item) => (
+            <button
+              onClick={handleBoardClick}
+              className={`px-3 py-2 rounded-md transition-colors ${
+                isDarkMode
+                  ? "text-gray-300 hover:text-purple-400"
+                  : "text-gray-600 hover:text-purple-600"
+              }`}
+            >
+              Board
+            </button>
+            {["Activities", "Contacts", "Documents"].map((item) => (
               <button
                 key={item}
                 className={`px-3 py-2 rounded-md transition-colors ${

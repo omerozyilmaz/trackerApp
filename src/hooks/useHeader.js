@@ -11,13 +11,19 @@ const useHeader = () => {
     navigate(path);
   };
 
+  const handleBoardClick = () => {
+    navigate("/job-board");
+  };
+
   return {
     isDarkMode,
     toggleDarkMode,
     isAuthenticated,
     user,
     logout,
+    navigate,
     handleNavigate,
+    handleBoardClick,
   };
 };
 
