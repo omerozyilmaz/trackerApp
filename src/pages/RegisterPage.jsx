@@ -1,53 +1,76 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import {
+  selectRegisterForm,
+  updateRegisterField,
+  setRegisterFieldTouched,
+  validateRegisterField,
+  validateRegisterForm,
+  setRegisterFormError,
+  setRegisterSubmitting,
+} from "../store/slices/formSlice";
 
 const RegisterPage = () => {
-  const [userData, setUserData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [formError, setFormError] = useState("");
-  const { register, error, isLoading } = useAuth();
+  const dispatch = useDispatch();
+  const { values, errors, touched, formError, isSubmitting } =
+    useSelector(selectRegisterForm);
+  const { register } = useAuth();
   const { isDarkMode } = useTheme();
+
+  // Field değiştiğinde validasyon yap
+  useEffect(() => {
+    Object.keys(touched).forEach((field) => {
+      if (touched[field]) {
+        dispatch(
+          validateRegisterField(field, values[field], { register: { values } })
+        );
+      }
+    });
+  }, [values, touched, dispatch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    dispatch(updateRegisterField({ name, value }));
+  };
+
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    dispatch(setRegisterFieldTouched({ name }));
+    dispatch(
+      validateRegisterField(name, values[name], { register: { values } })
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormError("");
+    dispatch(setRegisterFormError(""));
 
-    // Basic validation
-    if (!userData.username || !userData.email || !userData.password) {
-      setFormError("Please fill in all required fields");
+    // Tüm alanları dokunulmuş olarak işaretle
+    ["username", "email", "password", "confirmPassword"].forEach((field) => {
+      dispatch(setRegisterFieldTouched({ name: field }));
+    });
+
+    // Form validasyonu
+    const isValid = dispatch(validateRegisterForm());
+    if (!isValid) {
       return;
     }
 
-    if (userData.password !== userData.confirmPassword) {
-      setFormError("Passwords do not match");
-      return;
-    }
+    dispatch(setRegisterSubmitting(true));
 
-    if (userData.password.length < 6) {
-      setFormError("Password must be at least 6 characters long");
-      return;
-    }
+    try {
+      // Remove confirmPassword before sending to API
+      const { confirmPassword, ...registerData } = values;
+      const result = await register(registerData);
 
-    // Remove confirmPassword before sending to API
-    const { confirmPassword, ...registerData } = userData;
-    const result = await register(registerData);
-
-    if (!result.success) {
-      setFormError(result.error);
+      if (!result.success) {
+        dispatch(setRegisterFormError(result.error));
+      }
+    } finally {
+      dispatch(setRegisterSubmitting(false));
     }
   };
 
@@ -70,9 +93,9 @@ const RegisterPage = () => {
           Create Account
         </h2>
 
-        {(error || formError) && (
+        {formError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {formError || error}
+            {formError}
           </div>
         )}
 
@@ -90,12 +113,19 @@ const RegisterPage = () => {
               type="text"
               id="username"
               name="username"
-              value={userData.username}
+              value={values.username}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onBlur={handleBlur}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                errors.username && touched.username
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
               placeholder="johndoe"
-              required
             />
+            {errors.username && touched.username && (
+              <p className="mt-1 text-sm text-red-600">{errors.username}</p>
+            )}
           </div>
 
           <div>
@@ -111,12 +141,19 @@ const RegisterPage = () => {
               type="email"
               id="email"
               name="email"
-              value={userData.email}
+              value={values.email}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onBlur={handleBlur}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                errors.email && touched.email
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
               placeholder="your@email.com"
-              required
             />
+            {errors.email && touched.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            )}
           </div>
 
           <div>
@@ -132,12 +169,19 @@ const RegisterPage = () => {
               type="password"
               id="password"
               name="password"
-              value={userData.password}
+              value={values.password}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onBlur={handleBlur}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                errors.password && touched.password
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
               placeholder="••••••••"
-              required
             />
+            {errors.password && touched.password && (
+              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+            )}
           </div>
 
           <div>
@@ -153,20 +197,29 @@ const RegisterPage = () => {
               type="password"
               id="confirmPassword"
               name="confirmPassword"
-              value={userData.confirmPassword}
+              value={values.confirmPassword}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onBlur={handleBlur}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                errors.confirmPassword && touched.confirmPassword
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
               placeholder="••••••••"
-              required
             />
+            {errors.confirmPassword && touched.confirmPassword && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.confirmPassword}
+              </p>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isSubmitting}
             className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors disabled:bg-purple-400"
           >
-            {isLoading ? "Creating account..." : "Register"}
+            {isSubmitting ? "Creating account..." : "Register"}
           </button>
         </form>
 

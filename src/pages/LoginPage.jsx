@@ -1,41 +1,73 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import {
+  selectLoginForm,
+  updateLoginField,
+  setLoginFieldTouched,
+  validateLoginField,
+  validateLoginForm,
+  setLoginFormError,
+  setLoginSubmitting,
+} from "../store/slices/formSlice";
 
 const LoginPage = () => {
-  const [credentials, setCredentials] = useState({
-    email: "",
-    password: "",
-  });
-  const [formError, setFormError] = useState("");
-  const { login, error, isLoading } = useAuth();
+  const dispatch = useDispatch();
+  const { values, errors, touched, formError, isSubmitting } =
+    useSelector(selectLoginForm);
+  const { login } = useAuth();
   const { isDarkMode } = useTheme();
+
+  // Field değiştiğinde validasyon yap
+  useEffect(() => {
+    Object.keys(touched).forEach((field) => {
+      if (touched[field]) {
+        dispatch(validateLoginField(field, values[field]));
+      }
+    });
+  }, [values, touched, dispatch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCredentials((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    dispatch(updateLoginField({ name, value }));
+  };
+
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    dispatch(setLoginFieldTouched({ name }));
+    dispatch(validateLoginField(name, values[name]));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormError("");
+    dispatch(setLoginFormError(""));
 
-    if (!credentials.email || !credentials.password) {
-      setFormError("Please fill in all fields");
+    // Tüm alanları dokunulmuş olarak işaretle
+    ["email", "password"].forEach((field) => {
+      dispatch(setLoginFieldTouched({ name: field }));
+    });
+
+    // Form validasyonu
+    const isValid = dispatch(validateLoginForm());
+    if (!isValid) {
       return;
     }
 
-    const result = await login({
-      email: credentials.email,
-      password: credentials.password,
-    });
+    dispatch(setLoginSubmitting(true));
 
-    if (!result.success) {
-      setFormError(result.error);
+    try {
+      const result = await login({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (!result.success) {
+        dispatch(setLoginFormError(result.error));
+      }
+    } finally {
+      dispatch(setLoginSubmitting(false));
     }
   };
 
@@ -58,9 +90,9 @@ const LoginPage = () => {
           Log In
         </h2>
 
-        {(error || formError) && (
+        {formError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {formError || error}
+            {formError}
           </div>
         )}
 
@@ -78,12 +110,19 @@ const LoginPage = () => {
               type="email"
               id="email"
               name="email"
-              value={credentials.email}
+              value={values.email}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onBlur={handleBlur}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                errors.email && touched.email
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
               placeholder="your@email.com"
-              required
             />
+            {errors.email && touched.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            )}
           </div>
 
           <div>
@@ -99,20 +138,27 @@ const LoginPage = () => {
               type="password"
               id="password"
               name="password"
-              value={credentials.password}
+              value={values.password}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onBlur={handleBlur}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                errors.password && touched.password
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
               placeholder="••••••••"
-              required
             />
+            {errors.password && touched.password && (
+              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isSubmitting}
             className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors disabled:bg-purple-400"
           >
-            {isLoading ? "Logging in..." : "Log In"}
+            {isSubmitting ? "Logging in..." : "Log In"}
           </button>
         </form>
 

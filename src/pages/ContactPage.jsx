@@ -1,7 +1,6 @@
 import React from "react";
 import { useTheme } from "../context/ThemeContext";
 import Header from "../components/Header";
-import { FaLinkedin, FaGithub, FaEnvelope } from "react-icons/fa";
 
 const ContactPage = () => {
   const { isDarkMode } = useTheme();
@@ -33,7 +32,7 @@ const ContactPage = () => {
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="w-32 h-32 rounded-full overflow-hidden">
                 <img
-                  src="/profile-image.jpg"
+                  src="/profile-photo.png"
                   alt="Ömer Özyılmaz"
                   className="w-full h-full object-cover"
                   onError={(e) => {
@@ -79,11 +78,13 @@ const ContactPage = () => {
                     : "bg-purple-50 hover:bg-purple-100"
                 }`}
               >
-                <FaLinkedin
+                <div
                   className={`text-4xl mb-3 ${
                     isDarkMode ? "text-purple-400" : "text-purple-600"
                   }`}
-                />
+                >
+                  in
+                </div>
                 <span
                   className={`text-lg font-medium ${
                     isDarkMode ? "text-white" : "text-gray-900"
@@ -110,11 +111,13 @@ const ContactPage = () => {
                     : "bg-purple-50 hover:bg-purple-100"
                 }`}
               >
-                <FaGithub
+                <div
                   className={`text-4xl mb-3 ${
                     isDarkMode ? "text-purple-400" : "text-purple-600"
                   }`}
-                />
+                >
+                  GH
+                </div>
                 <span
                   className={`text-lg font-medium ${
                     isDarkMode ? "text-white" : "text-gray-900"
@@ -139,11 +142,13 @@ const ContactPage = () => {
                     : "bg-purple-50 hover:bg-purple-100"
                 }`}
               >
-                <FaEnvelope
+                <div
                   className={`text-4xl mb-3 ${
                     isDarkMode ? "text-purple-400" : "text-purple-600"
                   }`}
-                />
+                >
+                  @
+                </div>
                 <span
                   className={`text-lg font-medium ${
                     isDarkMode ? "text-white" : "text-gray-900"
