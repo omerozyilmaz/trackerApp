@@ -1,10 +1,13 @@
 import axios from "axios";
 
+// Mevcut API URL sabitini güncelle
+const API_URL = "https://trackerappbackend-production.up.railway.app/api";
+
 // Create axios instance with base configuration
 const api = axios.create({
   // In development, this will be proxied through Vite
   // In production, you should set the full URL in VITE_API_URL
-  baseURL: "/api",
+  baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
   },
