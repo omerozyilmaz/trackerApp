@@ -17,7 +17,7 @@ const RegisterPage = () => {
   const dispatch = useDispatch();
   const { values, errors, touched, formError, isSubmitting } =
     useSelector(selectRegisterForm);
-  const { register } = useAuth();
+  const { register, isLoading } = useAuth();
   const { isDarkMode } = useTheme();
 
   // Field değiştiğinde validasyon yap
@@ -64,11 +64,19 @@ const RegisterPage = () => {
     try {
       // Remove confirmPassword before sending to API
       const { confirmPassword, ...registerData } = values;
+      console.log("Sending registration data:", registerData); // Debug log
+
       const result = await register(registerData);
+      console.log("Registration result:", result); // Debug log
 
       if (!result.success) {
         dispatch(setRegisterFormError(result.error));
       }
+    } catch (error) {
+      console.error("Registration error:", error); // Debug log
+      dispatch(
+        setRegisterFormError("An unexpected error occurred. Please try again.")
+      );
     } finally {
       dispatch(setRegisterSubmitting(false));
     }

@@ -2,11 +2,26 @@ import axios from "axios";
 import API_URL from "../config/api.js";
 
 const login = async (credentials) => {
-  return axios.post(`${API_URL}/login`, credentials);
+  try {
+    const response = await axios.post(`${API_URL}/login`, credentials);
+    return response;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
 };
 
 const register = async (userData) => {
-  return axios.post(`${API_URL}/register`, userData);
+  try {
+    console.log("Registering user with data:", userData); // Debug log
+    console.log("API URL:", `${API_URL}/register`); // Debug log
+
+    const response = await axios.post(`${API_URL}/register`, userData);
+    return response;
+  } catch (error) {
+    console.error("Register error:", error);
+    throw error;
+  }
 };
 
 // Fonksiyonları dışa aktarıyoruz
