@@ -147,47 +147,48 @@ export const validateLoginField = (name, value) => (dispatch) => {
   return !error;
 };
 
-export const validateRegisterField = (name, value, state) => (dispatch) => {
-  let error = "";
+export const validateRegisterField =
+  (name, value, formValues) => (dispatch) => {
+    let error = "";
 
-  switch (name) {
-    case "username":
-      if (!isNotEmpty(value)) {
-        error = "Username is required";
-      } else if (!isUsernameLongEnough(value)) {
-        error = "Username must be at least 3 characters";
-      }
-      break;
-    case "email":
-      if (!isNotEmpty(value)) {
-        error = "Email is required";
-      } else if (!isValidEmail(value)) {
-        error = "Email is invalid";
-      }
-      break;
-    case "password":
-      if (!isNotEmpty(value)) {
-        error = "Password is required";
-      } else if (!isPasswordLongEnough(value)) {
-        error = "Password must be at least 6 characters";
-      } else if (!hasUpperAndLowerCase(value)) {
-        error = "Password must contain both uppercase and lowercase letters";
-      }
-      break;
-    case "confirmPassword":
-      if (!isNotEmpty(value)) {
-        error = "Please confirm your password";
-      } else if (!doPasswordsMatch(state.register.values.password, value)) {
-        error = "Passwords do not match";
-      }
-      break;
-    default:
-      break;
-  }
+    switch (name) {
+      case "username":
+        if (!isNotEmpty(value)) {
+          error = "Username is required";
+        } else if (!isUsernameLongEnough(value)) {
+          error = "Username must be at least 3 characters";
+        }
+        break;
+      case "email":
+        if (!isNotEmpty(value)) {
+          error = "Email is required";
+        } else if (!isValidEmail(value)) {
+          error = "Email is invalid";
+        }
+        break;
+      case "password":
+        if (!isNotEmpty(value)) {
+          error = "Password is required";
+        } else if (!isPasswordLongEnough(value)) {
+          error = "Password must be at least 6 characters";
+        } else if (!hasUpperAndLowerCase(value)) {
+          error = "Password must contain both uppercase and lowercase letters";
+        }
+        break;
+      case "confirmPassword":
+        if (!isNotEmpty(value)) {
+          error = "Please confirm your password";
+        } else if (!doPasswordsMatch(formValues.password, value)) {
+          error = "Passwords do not match";
+        }
+        break;
+      default:
+        break;
+    }
 
-  dispatch(setRegisterFieldError({ name, error }));
-  return !error;
-};
+    dispatch(setRegisterFieldError({ name, error }));
+    return !error;
+  };
 
 export const validateLoginForm = () => (dispatch, getState) => {
   const { values } = getState().form.login;
@@ -204,16 +205,16 @@ export const validateRegisterForm = () => (dispatch, getState) => {
   const { values } = state.form.register;
 
   const usernameValid = dispatch(
-    validateRegisterField("username", values.username, state)
+    validateRegisterField("username", values.username, values)
   );
   const emailValid = dispatch(
-    validateRegisterField("email", values.email, state)
+    validateRegisterField("email", values.email, values)
   );
   const passwordValid = dispatch(
-    validateRegisterField("password", values.password, state)
+    validateRegisterField("password", values.password, values)
   );
   const confirmPasswordValid = dispatch(
-    validateRegisterField("confirmPassword", values.confirmPassword, state)
+    validateRegisterField("confirmPassword", values.confirmPassword, values)
   );
 
   return usernameValid && emailValid && passwordValid && confirmPasswordValid;

@@ -17,16 +17,14 @@ const RegisterPage = () => {
   const dispatch = useDispatch();
   const { values, errors, touched, formError, isSubmitting } =
     useSelector(selectRegisterForm);
-  const { register, isLoading } = useAuth();
+  const { register } = useAuth();
   const { isDarkMode } = useTheme();
 
   // Field değiştiğinde validasyon yap
   useEffect(() => {
     Object.keys(touched).forEach((field) => {
       if (touched[field]) {
-        dispatch(
-          validateRegisterField(field, values[field], { register: { values } })
-        );
+        dispatch(validateRegisterField(field, values[field], values));
       }
     });
   }, [values, touched, dispatch]);
@@ -39,9 +37,7 @@ const RegisterPage = () => {
   const handleBlur = (e) => {
     const { name } = e.target;
     dispatch(setRegisterFieldTouched({ name }));
-    dispatch(
-      validateRegisterField(name, values[name], { register: { values } })
-    );
+    dispatch(validateRegisterField(name, values[name], values));
   };
 
   const handleSubmit = async (e) => {
@@ -64,19 +60,11 @@ const RegisterPage = () => {
     try {
       // Remove confirmPassword before sending to API
       const { confirmPassword, ...registerData } = values;
-      console.log("Sending registration data:", registerData); // Debug log
-
       const result = await register(registerData);
-      console.log("Registration result:", result); // Debug log
 
       if (!result.success) {
         dispatch(setRegisterFormError(result.error));
       }
-    } catch (error) {
-      console.error("Registration error:", error); // Debug log
-      dispatch(
-        setRegisterFormError("An unexpected error occurred. Please try again.")
-      );
     } finally {
       dispatch(setRegisterSubmitting(false));
     }
