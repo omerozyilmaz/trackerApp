@@ -41,12 +41,28 @@ export const AuthProvider = ({ children }) => {
       const response = await loginService(credentials);
       console.log("Login response:", response.data);
 
+      // API yanıt yapısını kontrol et
       if (response.data && response.data.token) {
-        const userData = {
-          id: response.data.user.id,
-          username: response.data.user.username,
-          email: response.data.user.email,
-        };
+        // Kullanıcı bilgilerini API yanıtından al veya oluştur
+        let userData = {};
+
+        // API yanıtında user nesnesi varsa kullan
+        if (response.data.user) {
+          userData = {
+            id: response.data.user.id || "unknown",
+            username:
+              response.data.user.username || credentials.email.split("@")[0],
+            email: response.data.user.email || credentials.email,
+          };
+        }
+        // Eğer user nesnesi yoksa, email'den bir kullanıcı adı oluştur
+        else {
+          userData = {
+            id: response.data.userId || "unknown",
+            username: response.data.username || credentials.email.split("@")[0],
+            email: credentials.email,
+          };
+        }
 
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(userData));
@@ -86,7 +102,31 @@ export const AuthProvider = ({ children }) => {
       const response = await registerService(userData);
       console.log("Register response:", response.data);
 
-      if (response.data && response.data.success) {
+      if (response.data && (response.data.success || response.data.token)) {
+        // Eğer kayıt yanıtında token varsa, doğrudan giriş yapmış sayılır
+        if (response.data.token) {
+          const user = {
+            id: response.data.user?.id || "unknown",
+            username: response.data.user?.username || userData.username,
+            email: response.data.user?.email || userData.email,
+          };
+
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("user", JSON.stringify(user));
+
+          // Set default Authorization header for all requests
+          axios.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${response.data.token}`;
+
+          setUser(user);
+          setIsAuthenticated(true);
+
+          navigate("/job-board");
+
+          return { success: true };
+        }
+
         // Başarılı kayıt sonrası otomatik login
         try {
           const loginResponse = await loginService({
@@ -96,11 +136,25 @@ export const AuthProvider = ({ children }) => {
           console.log("Auto login response:", loginResponse.data);
 
           if (loginResponse.data && loginResponse.data.token) {
-            const user = {
-              id: loginResponse.data.user.id,
-              username: loginResponse.data.user.username,
-              email: loginResponse.data.user.email,
-            };
+            // Kullanıcı bilgilerini API yanıtından al veya oluştur
+            let user = {};
+
+            // API yanıtında user nesnesi varsa kullan
+            if (loginResponse.data.user) {
+              user = {
+                id: loginResponse.data.user.id || "unknown",
+                username: loginResponse.data.user.username || userData.username,
+                email: loginResponse.data.user.email || userData.email,
+              };
+            }
+            // Eğer user nesnesi yoksa, kayıt bilgilerinden oluştur
+            else {
+              user = {
+                id: loginResponse.data.userId || "unknown",
+                username: userData.username,
+                email: userData.email,
+              };
+            }
 
             localStorage.setItem("token", loginResponse.data.token);
             localStorage.setItem("user", JSON.stringify(user));
