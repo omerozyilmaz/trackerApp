@@ -1,16 +1,13 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useTheme } from "../../context/ThemeContext";
-import { setProfileData } from "../../store/slices/profileSlice";
 
-const AboutSection = ({ profile }) => {
+const AboutSection = ({ profile, onUpdate }) => {
   const { isDarkMode } = useTheme();
-  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(profile.about || "");
 
   const handleSave = () => {
-    dispatch(setProfileData({ ...profile, about: editData }));
+    onUpdate({ ...profile, about: editData });
     setIsEditing(false);
   };
 

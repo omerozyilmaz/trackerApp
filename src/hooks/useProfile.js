@@ -2,10 +2,13 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getProfile,
+  createProfile,
   updateProfile as updateProfileService,
   updateProfilePicture as updateProfilePictureService,
   updateEducation as updateEducationService,
   updateExperience as updateExperienceService,
+  addEducation as addEducationService,
+  addExperience as addExperienceService,
 } from "../services/profileService";
 import {
   setProfile,
@@ -32,10 +35,25 @@ const useProfile = () => {
       dispatch(setProfile(response.data));
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Failed to fetch profile";
+      const errorMessage = err.error || "Failed to fetch profile";
       setError(errorMessage);
       dispatch(setProfileError(errorMessage));
+      return { success: false, error: errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Yeni profil oluştur
+  const createNewProfile = async (initialData = {}) => {
+    try {
+      setIsLoading(true);
+      const response = await createProfile(initialData);
+      dispatch(setProfile(response.data));
+      return { success: true, data: response.data };
+    } catch (err) {
+      const errorMessage = err.error || "Failed to create profile";
+      setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
@@ -50,8 +68,7 @@ const useProfile = () => {
       dispatch(updateProfileData(response.data));
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Failed to update profile";
+      const errorMessage = err.error || "Failed to update profile";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -69,8 +86,23 @@ const useProfile = () => {
       );
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Failed to update profile picture";
+      const errorMessage = err.error || "Failed to update profile picture";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Eğitim bilgisi ekle
+  const addEducation = async (educationData) => {
+    try {
+      setIsLoading(true);
+      const response = await addEducationService(educationData);
+      dispatch(updateProfileData({ education: response.data.education }));
+      return { success: true, data: response.data };
+    } catch (err) {
+      const errorMessage = err.error || "Failed to add education";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -86,8 +118,23 @@ const useProfile = () => {
       dispatch(updateProfileData({ education: response.data.education }));
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Failed to update education";
+      const errorMessage = err.error || "Failed to update education";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Deneyim bilgisi ekle
+  const addExperience = async (experienceData) => {
+    try {
+      setIsLoading(true);
+      const response = await addExperienceService(experienceData);
+      dispatch(updateProfileData({ experience: response.data.experience }));
+      return { success: true, data: response.data };
+    } catch (err) {
+      const errorMessage = err.error || "Failed to add experience";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -103,8 +150,7 @@ const useProfile = () => {
       dispatch(updateProfileData({ experience: response.data.experience }));
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Failed to update experience";
+      const errorMessage = err.error || "Failed to update experience";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -122,9 +168,12 @@ const useProfile = () => {
     isLoading,
     error,
     isEditing,
+    createNewProfile,
     updateProfile,
     updateProfilePicture,
+    addEducation,
     updateEducation,
+    addExperience,
     updateExperience,
     toggleEditMode,
   };
