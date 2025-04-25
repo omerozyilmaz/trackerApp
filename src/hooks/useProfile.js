@@ -64,26 +64,6 @@ const useProfile = () => {
   const updateProfile = async (profileData) => {
     try {
       setIsLoading(true);
-
-      // Ad ve soyad güncellemesi için özel işlem
-      if (profileData.firstName || profileData.lastName) {
-        const basicInfoResponse = await updateProfileService({
-          firstName: profileData.firstName,
-          lastName: profileData.lastName,
-        });
-
-        // Redux store'u güncelle
-        dispatch(
-          updateProfileData({
-            firstName: basicInfoResponse.data.firstName,
-            lastName: basicInfoResponse.data.lastName,
-          })
-        );
-
-        return { success: true, data: basicInfoResponse.data };
-      }
-
-      // Diğer profil bilgileri için normal güncelleme
       const response = await updateProfileService(profileData);
       dispatch(updateProfileData(response.data));
       return { success: true, data: response.data };
