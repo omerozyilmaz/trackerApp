@@ -68,13 +68,6 @@ const ProfileHeader = ({ profile, onEditClick, onPictureChange }) => {
               isDarkMode ? "text-gray-300" : "text-gray-600"
             }`}
           >
-            @{profile.username}
-          </p>
-          <p
-            className={`text-lg ${
-              isDarkMode ? "text-gray-300" : "text-gray-600"
-            }`}
-          >
             {profile.currentPosition}
           </p>
           <p
