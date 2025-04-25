@@ -29,6 +29,34 @@ const getProfile = async () => {
     const response = await api.get("/");
     return response;
   } catch (error) {
+    if (error.response?.status === 404) {
+      // Profil bulunamadıysa yeni profil oluştur
+      return createProfile();
+    }
+    throw handleError(error);
+  }
+};
+
+// Yeni profil oluştur
+const createProfile = async (initialData = {}) => {
+  try {
+    const defaultProfile = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      location: "",
+      currentPosition: "",
+      about: "",
+      profilePicture: "",
+      education: [],
+      experience: [],
+      ...initialData,
+    };
+
+    const response = await api.post("/", defaultProfile);
+    return response;
+  } catch (error) {
     throw handleError(error);
   }
 };
@@ -82,6 +110,28 @@ const updateExperience = async (experienceData) => {
   }
 };
 
+// Eğitim bilgisi ekle
+const addEducation = async (educationData) => {
+  try {
+    const response = await api.post("/education", { education: educationData });
+    return response;
+  } catch (error) {
+    throw handleError(error);
+  }
+};
+
+// Deneyim bilgisi ekle
+const addExperience = async (experienceData) => {
+  try {
+    const response = await api.post("/experience", {
+      experience: experienceData,
+    });
+    return response;
+  } catch (error) {
+    throw handleError(error);
+  }
+};
+
 // Hata yönetimi
 const handleError = (error) => {
   console.error("Profile service error:", error);
@@ -93,8 +143,11 @@ const handleError = (error) => {
 
 export {
   getProfile,
+  createProfile,
   updateProfile,
   updateProfilePicture,
   updateEducation,
   updateExperience,
+  addEducation,
+  addExperience,
 };

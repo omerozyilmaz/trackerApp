@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "../components/Layout";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import AboutSection from "../components/profile/AboutSection";
@@ -7,6 +7,8 @@ import ExperienceSection from "../components/profile/ExperienceSection";
 import ProfileForm from "../components/profile/ProfileForm";
 import useProfile from "../hooks/useProfile";
 import { useTheme } from "../context/ThemeContext";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import ErrorMessage from "../components/common/ErrorMessage";
 
 const ProfilePage = () => {
   const {
@@ -14,30 +16,29 @@ const ProfilePage = () => {
     isLoading,
     error,
     isEditing,
+    createNewProfile,
     updateProfile,
     updateProfilePicture,
     toggleEditMode,
+    addEducation,
+    updateEducation,
+    addExperience,
+    updateExperience,
   } = useProfile();
   const { isDarkMode } = useTheme();
 
+  useEffect(() => {
+    if (error?.includes("404")) {
+      createNewProfile();
+    }
+  }, [error]);
+
   if (isLoading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center h-[calc(100vh-100px)]">
-          <div className="text-xl">Loading profile...</div>
-        </div>
-      </Layout>
-    );
+    return <LoadingSpinner />;
   }
 
-  if (error) {
-    return (
-      <Layout>
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      </Layout>
-    );
+  if (error && !error.includes("404")) {
+    return <ErrorMessage message={error} />;
   }
 
   const handleProfileUpdate = async (updatedData) => {
@@ -95,12 +96,14 @@ const ProfilePage = () => {
             />
             <AboutSection profile={profile} onUpdate={handleAboutUpdate} />
             <EducationSection
-              education={profile.education}
-              onUpdate={handleEducationUpdate}
+              education={profile?.education || []}
+              onAdd={addEducation}
+              onUpdate={updateEducation}
             />
             <ExperienceSection
-              experience={profile.experience}
-              onUpdate={handleExperienceUpdate}
+              experience={profile?.experience || []}
+              onAdd={addExperience}
+              onUpdate={updateExperience}
             />
           </>
         )}
