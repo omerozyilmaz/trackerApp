@@ -32,8 +32,7 @@ const useProfile = () => {
       dispatch(setProfile(response.data));
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Failed to fetch profile";
+      const errorMessage = err.error || "Failed to fetch profile";
       setError(errorMessage);
       dispatch(setProfileError(errorMessage));
       return { success: false, error: errorMessage };
@@ -50,8 +49,7 @@ const useProfile = () => {
       dispatch(updateProfileData(response.data));
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Failed to update profile";
+      const errorMessage = err.error || "Failed to update profile";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -69,8 +67,7 @@ const useProfile = () => {
       );
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Failed to update profile picture";
+      const errorMessage = err.error || "Failed to update profile picture";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -86,8 +83,7 @@ const useProfile = () => {
       dispatch(updateProfileData({ education: response.data.education }));
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Failed to update education";
+      const errorMessage = err.error || "Failed to update education";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -103,8 +99,7 @@ const useProfile = () => {
       dispatch(updateProfileData({ experience: response.data.experience }));
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Failed to update experience";
+      const errorMessage = err.error || "Failed to update experience";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {

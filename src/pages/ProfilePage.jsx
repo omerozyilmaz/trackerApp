@@ -73,6 +73,10 @@ const ProfilePage = () => {
     });
   };
 
+  const handleAboutUpdate = (updatedProfile) => {
+    handleProfileUpdate(updatedProfile);
+  };
+
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
@@ -89,7 +93,7 @@ const ProfilePage = () => {
               onEditClick={toggleEditMode}
               onPictureChange={handleProfilePictureChange}
             />
-            <AboutSection profile={profile} />
+            <AboutSection profile={profile} onUpdate={handleAboutUpdate} />
             <EducationSection
               education={profile.education}
               onUpdate={handleEducationUpdate}
