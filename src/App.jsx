@@ -14,6 +14,8 @@ import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ContactPage from "./pages/ContactPage";
+import ProfilePage from "./pages/ProfilePage";
+import LinkedInCallback from "./pages/LinkedInCallback";
 
 const App = () => {
   return (
@@ -27,6 +29,8 @@ const App = () => {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/linkedin/callback" element={<LinkedInCallback />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AuthProvider>
