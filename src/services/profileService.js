@@ -41,7 +41,6 @@ const getProfile = async () => {
 const createProfile = async (initialData = {}) => {
   try {
     const defaultProfile = {
-      username: "",
       firstName: "",
       lastName: "",
       email: "",

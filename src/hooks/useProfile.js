@@ -64,13 +64,8 @@ const useProfile = () => {
   const updateProfile = async (profileData) => {
     try {
       setIsLoading(true);
-
-      // Sadece değişen alanları güncelle
       const response = await updateProfileService(profileData);
-
-      // Redux store'u güncelle
       dispatch(updateProfileData(response.data));
-
       return { success: true, data: response.data };
     } catch (err) {
       const errorMessage = err.error || "Failed to update profile";
