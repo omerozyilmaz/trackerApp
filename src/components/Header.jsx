@@ -93,15 +93,26 @@ const Header = () => {
 
           {isAuthenticated ? (
             <>
-              {/* User Info */}
+              {/* User Info with Profile Link */}
               <div className="hidden sm:flex items-center gap-2">
-                <span
-                  className={`${
-                    isDarkMode ? "text-gray-300" : "text-gray-700"
+                <Link
+                  to="/profile"
+                  className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                    isDarkMode
+                      ? "text-gray-300 hover:bg-gray-700"
+                      : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
-                  {user?.username}
-                </span>
+                  <span>{user?.username}</span>
+                  <img
+                    src={user?.profilePicture || "/default-avatar.png"}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full"
+                    onError={(e) => {
+                      e.target.src = "/default-avatar.png";
+                    }}
+                  />
+                </Link>
               </div>
 
               {/* Logout Button */}
