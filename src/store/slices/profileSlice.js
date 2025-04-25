@@ -1,8 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  data: null,
-  loading: false,
+  data: {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    location: "",
+    currentPosition: "",
+    about: "",
+    profilePicture: "",
+    education: [],
+    experience: [],
+  },
   error: null,
 };
 
@@ -12,34 +22,23 @@ const profileSlice = createSlice({
   reducers: {
     setProfile: (state, action) => {
       state.data = action.payload;
-      state.loading = false;
       state.error = null;
     },
     updateProfileData: (state, action) => {
       state.data = { ...state.data, ...action.payload };
-      state.loading = false;
       state.error = null;
     },
     setProfileError: (state, action) => {
       state.error = action.payload;
-      state.loading = false;
     },
-    setProfileLoading: (state) => {
-      state.loading = true;
+    resetProfile: (state) => {
+      state.data = initialState.data;
       state.error = null;
     },
   },
 });
 
-export const {
-  setProfile,
-  updateProfileData,
-  setProfileError,
-  setProfileLoading,
-} = profileSlice.actions;
-
-export const selectProfile = (state) => state.profile.data;
-export const selectProfileLoading = (state) => state.profile.loading;
-export const selectProfileError = (state) => state.profile.error;
+export const { setProfile, updateProfileData, setProfileError, resetProfile } =
+  profileSlice.actions;
 
 export default profileSlice.reducer;

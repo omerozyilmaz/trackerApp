@@ -1,18 +1,14 @@
 import React, { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
-import useProfile from "../../hooks/useProfile";
 
-const AboutSection = ({ profile }) => {
+const AboutSection = ({ profile, onUpdate }) => {
   const { isDarkMode } = useTheme();
-  const { updateProfile } = useProfile();
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(profile.about || "");
 
-  const handleSave = async () => {
-    const result = await updateProfile({ ...profile, about: editData });
-    if (result.success) {
-      setIsEditing(false);
-    }
+  const handleSave = () => {
+    onUpdate({ ...profile, about: editData });
+    setIsEditing(false);
   };
 
   return (

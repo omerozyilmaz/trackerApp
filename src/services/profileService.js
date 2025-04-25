@@ -65,6 +65,17 @@ const createProfile = async (initialData = {}) => {
 // Profil bilgilerini güncelle
 const updateProfile = async (profileData) => {
   try {
+    // Kullanıcı adı, ad ve soyad güncellemesi için özel endpoint
+    if (profileData.username || profileData.firstName || profileData.lastName) {
+      const response = await api.put("/basic-info", {
+        username: profileData.username,
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+      });
+      return response;
+    }
+
+    // Diğer profil bilgileri için normal endpoint
     const response = await api.put("/", profileData);
     return response;
   } catch (error) {
