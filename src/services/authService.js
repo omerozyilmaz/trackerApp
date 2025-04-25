@@ -9,6 +9,15 @@ const authAxios = axios.create({
   },
 });
 
+// LinkedIn OAuth yapılandırması
+const LINKEDIN_CONFIG = {
+  clientId: "7709zu6glkb0t0",
+  redirectUri:
+    "https://trackerappbackend-production.up.railway.app/api/linkedin/callback",
+  scope: "r_liteprofile r_emailaddress",
+  state: Math.random().toString(36).substring(7),
+};
+
 // Request interceptor - token ekleme
 authAxios.interceptors.request.use(
   (config) => {
@@ -59,13 +68,34 @@ const login = async (credentials) => {
 
 // LinkedIn ile giriş başlatma
 const initiateLinkedInLogin = () => {
-  window.location.href = `${API_URL}/linkedin/auth`;
+  const params = new URLSearchParams({
+    response_type: "code",
+    client_id: LINKEDIN_CONFIG.clientId,
+    redirect_uri: LINKEDIN_CONFIG.redirectUri,
+    state: LINKEDIN_CONFIG.state,
+    scope: LINKEDIN_CONFIG.scope,
+  });
+
+  const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?${params.toString()}`;
+  console.log("LinkedIn Auth URL:", linkedInAuthUrl);
+
+  // State'i sakla
+  localStorage.setItem("linkedin_oauth_state", LINKEDIN_CONFIG.state);
+
+  window.location.href = linkedInAuthUrl;
 };
 
 // LinkedIn callback işlemi
-const handleLinkedInCallback = async (code) => {
+const handleLinkedInCallback = async (code, state) => {
   try {
-    const response = await authAxios.get(`/linkedin/callback?code=${code}`);
+    // State kontrolü
+    const savedState = localStorage.getItem("linkedin_oauth_state");
+    if (state !== savedState) {
+      throw new Error("Invalid state parameter");
+    }
+
+    console.log("Sending LinkedIn callback request with code:", code);
+    const response = await authAxios.post("/linkedin/callback", { code });
 
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
@@ -73,6 +103,9 @@ const handleLinkedInCallback = async (code) => {
         "Authorization"
       ] = `Bearer ${response.data.token}`;
     }
+
+    // State'i temizle
+    localStorage.removeItem("linkedin_oauth_state");
 
     return response;
   } catch (error) {
@@ -84,6 +117,7 @@ const handleLinkedInCallback = async (code) => {
 // Çıkış işlemi
 const logout = () => {
   localStorage.removeItem("token");
+  localStorage.removeItem("linkedin_oauth_state");
   delete authAxios.defaults.headers.common["Authorization"];
 };
 

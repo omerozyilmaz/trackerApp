@@ -12,13 +12,30 @@ const LinkedInCallback = () => {
   useEffect(() => {
     const handleCallback = async () => {
       const code = searchParams.get("code");
-      if (!code) {
-        navigate("/login");
+      const state = searchParams.get("state");
+      const error = searchParams.get("error");
+      const errorDescription = searchParams.get("error_description");
+
+      console.log("LinkedIn callback params:", {
+        code,
+        state,
+        error,
+        errorDescription,
+      });
+
+      if (error || !code) {
+        const errorMsg =
+          errorDescription || "LinkedIn login failed. Please try again.";
+        console.error("LinkedIn OAuth error:", errorMsg);
+        navigate("/login", { state: { error: errorMsg } });
         return;
       }
 
       try {
-        const response = await handleLinkedInCallback(code);
+        // Backend'e code'u gönder
+        const response = await handleLinkedInCallback(code, state);
+        console.log("Backend response:", response);
+
         if (response.data.token) {
           // Kullanıcı bilgilerini güncelle
           const userData = {
@@ -39,9 +56,12 @@ const LinkedInCallback = () => {
         }
       } catch (error) {
         console.error("LinkedIn callback error:", error);
-        navigate("/login", {
-          state: { error: "LinkedIn login failed. Please try again." },
-        });
+        const errorMsg =
+          error.message === "Invalid state parameter"
+            ? "Security validation failed. Please try again."
+            : "LinkedIn login failed. Please try again.";
+
+        navigate("/login", { state: { error: errorMsg } });
       }
     };
 
