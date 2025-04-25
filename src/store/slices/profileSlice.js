@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   data: {
+    username: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -21,11 +22,15 @@ const profileSlice = createSlice({
   initialState,
   reducers: {
     setProfile: (state, action) => {
-      state.data = action.payload;
+      state.data = { ...initialState.data, ...action.payload };
       state.error = null;
     },
     updateProfileData: (state, action) => {
-      state.data = { ...state.data, ...action.payload };
+      state.data = {
+        ...state.data,
+        ...action.payload,
+        username: state.data.username,
+      };
       state.error = null;
     },
     setProfileError: (state, action) => {
