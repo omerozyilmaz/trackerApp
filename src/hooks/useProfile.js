@@ -65,14 +65,9 @@ const useProfile = () => {
     try {
       setIsLoading(true);
 
-      // Kullanıcı adı, ad ve soyad güncellemesi için özel işlem
-      if (
-        profileData.username ||
-        profileData.firstName ||
-        profileData.lastName
-      ) {
+      // Ad ve soyad güncellemesi için özel işlem
+      if (profileData.firstName || profileData.lastName) {
         const basicInfoResponse = await updateProfileService({
-          username: profileData.username,
           firstName: profileData.firstName,
           lastName: profileData.lastName,
         });
@@ -80,7 +75,6 @@ const useProfile = () => {
         // Redux store'u güncelle
         dispatch(
           updateProfileData({
-            username: basicInfoResponse.data.username,
             firstName: basicInfoResponse.data.firstName,
             lastName: basicInfoResponse.data.lastName,
           })

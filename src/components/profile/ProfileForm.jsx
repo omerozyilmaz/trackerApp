@@ -65,24 +65,6 @@ const ProfileForm = ({ profile, onSubmit, onCancel }) => {
               isDarkMode ? "text-gray-200" : "text-gray-700"
             }`}
           >
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            className={inputClassName}
-            placeholder="Enter your username"
-          />
-        </div>
-
-        <div>
-          <label
-            className={`block mb-2 text-sm font-medium ${
-              isDarkMode ? "text-gray-200" : "text-gray-700"
-            }`}
-          >
             First Name
           </label>
           <input
