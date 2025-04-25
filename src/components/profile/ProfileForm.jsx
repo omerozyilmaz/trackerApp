@@ -46,7 +46,14 @@ const ProfileForm = ({ profile, onSubmit, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    // Sadece değişen alanları gönder
+    const updatedData = {};
+    Object.keys(formData).forEach((key) => {
+      if (formData[key] !== profile[key]) {
+        updatedData[key] = formData[key];
+      }
+    });
+    onSubmit(updatedData);
   };
 
   const inputClassName = `w-full px-3 py-2 rounded-md ${
