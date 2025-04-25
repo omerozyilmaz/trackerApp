@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import useProfile from "../../hooks/useProfile";
 
-const ProfileHeader = ({ profile, onEditClick, onPictureChange }) => {
+const ProfileHeader = ({ profile, onEditClick }) => {
   const { isDarkMode } = useTheme();
+  const { updateProfilePicture } = useProfile();
   const [isHovered, setIsHovered] = useState(false);
 
-  const handlePictureChange = (event) => {
+  const handlePictureChange = async (event) => {
     const file = event.target.files[0];
-    if (file && onPictureChange) {
-      onPictureChange(file);
+    if (file) {
+      await updateProfilePicture(file);
     }
   };
 
@@ -63,6 +65,13 @@ const ProfileHeader = ({ profile, onEditClick, onPictureChange }) => {
           >
             {profile.firstName} {profile.lastName}
           </h1>
+          <p
+            className={`text-lg mt-2 ${
+              isDarkMode ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
+            @{profile.username}
+          </p>
           <p
             className={`text-lg mt-2 ${
               isDarkMode ? "text-gray-300" : "text-gray-600"

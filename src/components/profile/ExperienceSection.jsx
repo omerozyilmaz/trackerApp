@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import useProfile from "../../hooks/useProfile";
 
-const ExperienceSection = ({ experience = [], onUpdate }) => {
+const ExperienceSection = ({ experience = [] }) => {
   const { isDarkMode } = useTheme();
+  const { updateProfile } = useProfile();
   const [isEditing, setIsEditing] = useState(false);
   const [newExperience, setNewExperience] = useState({
     title: "",
@@ -13,24 +15,27 @@ const ExperienceSection = ({ experience = [], onUpdate }) => {
     description: "",
   });
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (newExperience.title && newExperience.company) {
-      onUpdate([...experience, newExperience]);
-      setNewExperience({
-        title: "",
-        company: "",
-        location: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-      });
-      setIsEditing(false);
+      const updatedExperience = [...experience, newExperience];
+      const result = await updateProfile({ experience: updatedExperience });
+      if (result.success) {
+        setNewExperience({
+          title: "",
+          company: "",
+          location: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        });
+        setIsEditing(false);
+      }
     }
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = async (index) => {
     const updatedExperience = experience.filter((_, i) => i !== index);
-    onUpdate(updatedExperience);
+    await updateProfile({ experience: updatedExperience });
   };
 
   const handleChange = (e) => {
@@ -97,7 +102,7 @@ const ExperienceSection = ({ experience = [], onUpdate }) => {
                 : "bg-gray-100 text-gray-900"
             }`}
           />
-          <div className="flex gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <input
               type="date"
               name="startDate"

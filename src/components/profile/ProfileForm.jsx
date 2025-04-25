@@ -4,6 +4,9 @@ import { useTheme } from "../../context/ThemeContext";
 const ProfileForm = ({ profile, onSubmit, onCancel }) => {
   const { isDarkMode } = useTheme();
   const [formData, setFormData] = useState({
+    username: profile?.username || "",
+    firstName: profile?.firstName || "",
+    lastName: profile?.lastName || "",
     headline: profile?.headline || "",
     summary: profile?.summary || "",
     location: profile?.location || "",
@@ -56,6 +59,60 @@ const ProfileForm = ({ profile, onSubmit, onCancel }) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Information */}
       <div className="space-y-4">
+        <div>
+          <label
+            className={`block mb-2 text-sm font-medium ${
+              isDarkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
+            Username
+          </label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className={inputClassName}
+            placeholder="Enter your username"
+          />
+        </div>
+
+        <div>
+          <label
+            className={`block mb-2 text-sm font-medium ${
+              isDarkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
+            First Name
+          </label>
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+            className={inputClassName}
+            placeholder="Enter your first name"
+          />
+        </div>
+
+        <div>
+          <label
+            className={`block mb-2 text-sm font-medium ${
+              isDarkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
+            Last Name
+          </label>
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+            className={inputClassName}
+            placeholder="Enter your last name"
+          />
+        </div>
+
         <div>
           <label
             className={`block mb-2 text-sm font-medium ${

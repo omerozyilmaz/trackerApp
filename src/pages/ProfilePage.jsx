@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import AboutSection from "../components/profile/AboutSection";
@@ -11,21 +11,10 @@ import LoadingSpinner from "../components/common/LoadingSpinner";
 import ErrorMessage from "../components/common/ErrorMessage";
 
 const ProfilePage = () => {
-  const {
-    profile,
-    isLoading,
-    error,
-    isEditing,
-    createNewProfile,
-    updateProfile,
-    updateProfilePicture,
-    toggleEditMode,
-    addEducation,
-    updateEducation,
-    addExperience,
-    updateExperience,
-  } = useProfile();
+  const { profile, isLoading, error, createNewProfile, updateProfile } =
+    useProfile();
   const { isDarkMode } = useTheme();
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     if (error?.includes("404")) {
@@ -43,39 +32,9 @@ const ProfilePage = () => {
 
   const handleProfileUpdate = async (updatedData) => {
     const result = await updateProfile(updatedData);
-    if (!result.success) {
-      // Handle error
-      console.error("Failed to update profile:", result.error);
+    if (result.success) {
+      setIsEditing(false);
     }
-  };
-
-  const handleProfilePictureChange = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const result = await updateProfilePicture(file);
-      if (!result.success) {
-        // Handle error
-        console.error("Failed to update profile picture:", result.error);
-      }
-    }
-  };
-
-  const handleEducationUpdate = (updatedEducation) => {
-    handleProfileUpdate({
-      ...profile,
-      education: updatedEducation,
-    });
-  };
-
-  const handleExperienceUpdate = (updatedExperience) => {
-    handleProfileUpdate({
-      ...profile,
-      experience: updatedExperience,
-    });
-  };
-
-  const handleAboutUpdate = (updatedProfile) => {
-    handleProfileUpdate(updatedProfile);
   };
 
   return (
@@ -85,26 +44,17 @@ const ProfilePage = () => {
           <ProfileForm
             profile={profile}
             onSubmit={handleProfileUpdate}
-            onCancel={toggleEditMode}
+            onCancel={() => setIsEditing(false)}
           />
         ) : (
           <>
             <ProfileHeader
               profile={profile}
-              onEditClick={toggleEditMode}
-              onPictureChange={handleProfilePictureChange}
+              onEditClick={() => setIsEditing(true)}
             />
-            <AboutSection profile={profile} onUpdate={handleAboutUpdate} />
-            <EducationSection
-              education={profile?.education || []}
-              onAdd={addEducation}
-              onUpdate={updateEducation}
-            />
-            <ExperienceSection
-              experience={profile?.experience || []}
-              onAdd={addExperience}
-              onUpdate={updateExperience}
-            />
+            <AboutSection profile={profile} />
+            <EducationSection education={profile?.education || []} />
+            <ExperienceSection experience={profile?.experience || []} />
           </>
         )}
       </div>

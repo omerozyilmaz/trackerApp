@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import useProfile from "../../hooks/useProfile";
 
-const EducationSection = ({ education = [], onUpdate }) => {
+const EducationSection = ({ education = [] }) => {
   const { isDarkMode } = useTheme();
+  const { updateProfile } = useProfile();
   const [isEditing, setIsEditing] = useState(false);
   const [newEducation, setNewEducation] = useState({
     school: "",
@@ -13,24 +15,27 @@ const EducationSection = ({ education = [], onUpdate }) => {
     description: "",
   });
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (newEducation.school && newEducation.degree) {
-      onUpdate([...education, newEducation]);
-      setNewEducation({
-        school: "",
-        degree: "",
-        fieldOfStudy: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-      });
-      setIsEditing(false);
+      const updatedEducation = [...education, newEducation];
+      const result = await updateProfile({ education: updatedEducation });
+      if (result.success) {
+        setNewEducation({
+          school: "",
+          degree: "",
+          fieldOfStudy: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        });
+        setIsEditing(false);
+      }
     }
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = async (index) => {
     const updatedEducation = education.filter((_, i) => i !== index);
-    onUpdate(updatedEducation);
+    await updateProfile({ education: updatedEducation });
   };
 
   const handleChange = (e) => {
@@ -97,7 +102,7 @@ const EducationSection = ({ education = [], onUpdate }) => {
                 : "bg-gray-100 text-gray-900"
             }`}
           />
-          <div className="flex gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <input
               type="date"
               name="startDate"
