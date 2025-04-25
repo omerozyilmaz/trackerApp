@@ -2,6 +2,8 @@ import React from "react";
 import Layout from "../components/Layout";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import AboutSection from "../components/profile/AboutSection";
+import EducationSection from "../components/profile/EducationSection";
+import ExperienceSection from "../components/profile/ExperienceSection";
 import ProfileForm from "../components/profile/ProfileForm";
 import useProfile from "../hooks/useProfile";
 import { useTheme } from "../context/ThemeContext";
@@ -57,6 +59,20 @@ const ProfilePage = () => {
     }
   };
 
+  const handleEducationUpdate = (updatedEducation) => {
+    handleProfileUpdate({
+      ...profile,
+      education: updatedEducation,
+    });
+  };
+
+  const handleExperienceUpdate = (updatedExperience) => {
+    handleProfileUpdate({
+      ...profile,
+      experience: updatedExperience,
+    });
+  };
+
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
@@ -74,7 +90,14 @@ const ProfilePage = () => {
               onPictureChange={handleProfilePictureChange}
             />
             <AboutSection profile={profile} />
-            {/* Add more sections as needed */}
+            <EducationSection
+              education={profile.education}
+              onUpdate={handleEducationUpdate}
+            />
+            <ExperienceSection
+              experience={profile.experience}
+              onUpdate={handleExperienceUpdate}
+            />
           </>
         )}
       </div>
